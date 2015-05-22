@@ -19,8 +19,9 @@ endfun
 call SetupVAM()
 VAMActivate matchit.zip vim-addon-commenting
 VAMActivate ag
-VAMActivate ctrlp
-VAMActivate Gundo
+VAMActivate github:junegunn/fzf
+" VAMActivate ctrlp
+VAMActivate github:sjl/gundo.vim
 VAMActivate mustache
 VAMActivate github:scrooloose/nerdtree
 VAMActivate Syntastic
@@ -61,18 +62,30 @@ set nocompatible | filetype indent plugin on | syn on
 let g:syntastic_check_on_open=1
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": "default", "target_pane": "0"}
-set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:nerdtree_tabs_open_on_console_startup = 1
+set rtp+=~/.fzf
+" set runtimepath^=~/.vim/bundle/ctrlp.vim
 set iskeyword=@,?,!,_,48-57,192-255
 set wildmode=longest:full
 set ignorecase
 set tags=./tags,tags;$HOME
 let g:mustache_abbreviations = 1
 set re=1 " change regex engine to fix ruby syntax slowness
+set mouse=a
+set backspace=indent,eol,start
 au FocusLost * silent! wa " autosave
-let g:ctrlp_max_depth = 50
-let g:ctrlp_max_files = 0
-let g:ctrlp_follow_symlinks = 1
-let g:ctrlp_clear_cache_on_exit = 0
+let g:ycm_key_list_select_completion = ['<C-j>']
+let g:ycm_key_list_previous_completion = ['<C-k>']
+set lazyredraw
+autocmd BufLeave,CursorHold,CursorHoldI,FocusLost * silent! wa
+" let g:ctrlp_max_depth = 50
+" let g:ctrlp_max_files = 0
+" let g:ctrlp_follow_symlinks = 1
+" let g:ctrlp_clear_cache_on_exit = 0
+" let g:ctrlp_user_command = [
+"     \ '.git', 'cd %s && git ls-files . -co --exclude-standard',
+"     \ 'find %s -type f'
+"     \ ]
 
 " These change the vim regex to not escape certain characters different than perl/python
 " nnoremap / /\v
@@ -90,7 +103,8 @@ set number            " Line numbers
 set foldlevel=99      " by default do not fold anything
 set guioptions-=L
 set guioptions-=r 
-set cursorline
+set guicursor+=n-v-c:blinkon0
+set cursorline cursorcolumn
 au WinLeave * set nocursorline
 au WinEnter * set cursorline
 syntax on
@@ -125,10 +139,12 @@ set statusline +=%1*%4v\ %*                    " virtual column number
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <C-k> :exec("ltag ".expand("<cword>"))<CR>:lopen<CR><CR>
 map <D-R> :.Rake<cr>
-map <C-LeftMouse> <C-]>
 map <D-/> :TComment<cr>
-noremap <C-b> :CtrlPBuffer<cr>
-noremap <Leader>rc :source ~/.vimrc<CR>
+map <C-c> :.!pbcopy<cr>u
+map <Leader>/ :TComment<cr>
+" noremap <C-b> :CtrlPBuffer<cr>
+nmap <c-p> :FZF<cr>
+noremap <Leader>rc :source ~/.nvimrc<CR>
 nmap <C-]> <C-w><C-]><C-w>T
 nmap <C-t> :AT<cr>
 nnoremap <leader>fn :let @*=expand("%:t")<CR> " copy current relative file name to system clipboard
@@ -140,13 +156,13 @@ map <Leader>n <plug>NERDTreeTabsToggle<CR>
 nnoremap <Leader>gu :GundoToggle<CR>
 map <Leader>gem :NERDTree ~/AppFolio/appfolio/gems<CR>
 map <Leader>rh :s/:\([^ ]*\)\(\s*\)=>/\1:/g<CR>
+map <ScrollWheelUp> <C-Y>
+map <ScrollWheelDown> <C-E>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MacVim Specific
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("gui_running")
-  let g:ycm_key_list_select_completion = ['<C-j>']
-  let g:ycm_key_list_previous_completion = ['<C-k>']
   autocmd VimEnter * :IndentGuidesEnable
   let g:indent_guides_guide_size=2
   let g:indent_guides_auto_colors = 0
