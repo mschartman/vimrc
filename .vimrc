@@ -46,13 +46,15 @@ VAMActivate vim-snippets
 VAMActivate surround
 VAMActivate vroom
 VAMActivate vim-coffee-script
-VAMActivate YouCompleteMe
+" VAMActivate YouCompleteMe
 VAMActivate vim-slime
 VAMActivate github:tpope/vim-rake
 VAMActivate github:tpope/vim-bundler
 VAMActivate github:othree/html5.vim
 VAMActivate github:pangloss/vim-javascript
+VAMActivate github:isRuslan/vim-es6.git
 VAMActivate github:mschartman/yartr
+VAMActivate github:groenewege/vim-less
 " use <c-x><c-p> to complete plugin names
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -63,6 +65,7 @@ let g:syntastic_check_on_open=1
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": "default", "target_pane": "0"}
 let g:nerdtree_tabs_open_on_console_startup = 1
+set clipboard=unnamed
 set rtp+=~/.fzf
 " set runtimepath^=~/.vim/bundle/ctrlp.vim
 set iskeyword=@,?,!,_,48-57,192-255
@@ -141,10 +144,13 @@ map <C-k> :exec("ltag ".expand("<cword>"))<CR>:lopen<CR><CR>
 map <D-R> :.Rake<cr>
 map <D-/> :TComment<cr>
 map <C-c> :.!pbcopy<cr>u
+:command W w
+nnoremap gr gT
 map <Leader>/ :TComment<cr>
+map <Leader>h :noh<cr>
 " noremap <C-b> :CtrlPBuffer<cr>
 nmap <c-p> :FZF<cr>
-noremap <Leader>rc :source ~/.nvimrc<CR>
+noremap <Leader>rc :source ~/.config/nvim/init.vim<CR>
 nmap <C-]> <C-w><C-]><C-w>T
 nmap <C-t> :AT<cr>
 nnoremap <leader>fn :let @*=expand("%:t")<CR> " copy current relative file name to system clipboard
@@ -169,3 +175,4 @@ if has("gui_running")
   autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#002D38 ctermbg=3
   autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#003340 ctermbg=4
 endif
+
