@@ -1,6 +1,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible | filetype indent plugin on | syn on
 fun! SetupVAM()
   let c = get(g:, 'vim_addon_manager', {})
   let g:vim_addon_manager = c
@@ -10,21 +11,21 @@ fun! SetupVAM()
   " let c.auto_install = 0
   let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
   if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
-    execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
+      execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
         \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
   endif
-  call vam#ActivateAddons([], {'auto_install' : 0})
+  call vam#ActivateAddons([], {})
 endfun
 
 call SetupVAM()
 VAMActivate matchit.zip vim-addon-commenting
 VAMActivate ag
 VAMActivate github:junegunn/fzf
-" VAMActivate ctrlp
+VAMActivate github:junegunn/fzf.vim
 VAMActivate github:sjl/gundo.vim
 VAMActivate mustache
 VAMActivate github:scrooloose/nerdtree
-VAMActivate Syntastic
+VAMActivate github:vim-syntastic/syntastic
 VAMActivate tComment
 VAMActivate tlib
 VAMActivate vcscommand
@@ -46,7 +47,6 @@ VAMActivate vim-snippets
 VAMActivate surround
 VAMActivate vroom
 VAMActivate vim-coffee-script
-" VAMActivate YouCompleteMe
 VAMActivate vim-slime
 VAMActivate github:tpope/vim-rake
 VAMActivate github:tpope/vim-bundler
@@ -55,19 +55,16 @@ VAMActivate github:pangloss/vim-javascript
 VAMActivate github:isRuslan/vim-es6.git
 VAMActivate github:mschartman/yartr
 VAMActivate github:groenewege/vim-less
-" use <c-x><c-p> to complete plugin names
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Setup
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible | filetype indent plugin on | syn on
 let g:syntastic_check_on_open=1
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": "default", "target_pane": "0"}
 let g:nerdtree_tabs_open_on_console_startup = 1
 set clipboard=unnamed
 set rtp+=~/.fzf
-" set runtimepath^=~/.vim/bundle/ctrlp.vim
 set iskeyword=@,?,!,_,48-57,192-255
 set wildmode=longest:full
 set ignorecase
@@ -77,19 +74,13 @@ set re=1 " change regex engine to fix ruby syntax slowness
 set mouse=a
 set backspace=indent,eol,start
 au FocusLost * silent! wa " autosave
+au SwapExists *.rb let v:swapchoice = 'e' " always edit by default when swap file exists
+au SwapExists *.js let v:swapchoice = 'e'
+au SwapExists *.css let v:swapchoice = 'e'
 let g:ycm_key_list_select_completion = ['<C-j>']
 let g:ycm_key_list_previous_completion = ['<C-k>']
 set lazyredraw
 autocmd BufLeave,CursorHold,CursorHoldI,FocusLost * silent! wa
-" let g:ctrlp_max_depth = 50
-" let g:ctrlp_max_files = 0
-" let g:ctrlp_follow_symlinks = 1
-" let g:ctrlp_clear_cache_on_exit = 0
-" let g:ctrlp_user_command = [
-"     \ '.git', 'cd %s && git ls-files . -co --exclude-standard',
-"     \ 'find %s -type f'
-"     \ ]
-
 " These change the vim regex to not escape certain characters different than perl/python
 " nnoremap / /\v
 " cnoremap s/ s/\v
@@ -98,7 +89,9 @@ autocmd BufLeave,CursorHold,CursorHoldI,FocusLost * silent! wa
 " Appearance
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set guifont=Inconsolata-dz\ for\ Powerline:h12
-set encoding=utf-8    " Necessary to show Unicode glyphs
+if !has('nvim')
+    set encoding=utf-8    " Necessary to show Unicode glyphs
+endif
 set t_Co=256          " Explicitly tell Vim that the terminal supports 256 colors
 colorscheme solarized
 set background=dark   " Use the dark version of the colorscheme
@@ -144,35 +137,21 @@ map <C-k> :exec("ltag ".expand("<cword>"))<CR>:lopen<CR><CR>
 map <D-R> :.Rake<cr>
 map <D-/> :TComment<cr>
 map <C-c> :.!pbcopy<cr>u
-:command W w
 nnoremap gr gT
 map <Leader>/ :TComment<cr>
 map <Leader>h :noh<cr>
-" noremap <C-b> :CtrlPBuffer<cr>
 nmap <c-p> :FZF<cr>
+nmap <c-n> :Buffers<cr>
+nmap <Space> :BLines<cr>
 noremap <Leader>rc :source ~/.config/nvim/init.vim<CR>
 nmap <C-]> <C-w><C-]><C-w>T
 nmap <C-t> :AT<cr>
 nnoremap <leader>fn :let @*=expand("%:t")<CR> " copy current relative file name to system clipboard
 nnoremap <leader>fp :let @*=expand("%:p")<CR> " copy current absolute file name to system clipboard
 nmap <C-f> :NERDTreeFind<CR>
-nmap <Space> <Plug>(easymotion-s)
-vmap <Space> <Plug>(easymotion-s)
+nmap <c-m> <Plug>(easymotion-s)
 map <Leader>n <plug>NERDTreeTabsToggle<CR>
 nnoremap <Leader>gu :GundoToggle<CR>
-map <Leader>gem :NERDTree ~/AppFolio/appfolio/gems<CR>
 map <Leader>rh :s/:\([^ ]*\)\(\s*\)=>/\1:/g<CR>
 map <ScrollWheelUp> <C-Y>
 map <ScrollWheelDown> <C-E>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MacVim Specific
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has("gui_running")
-  autocmd VimEnter * :IndentGuidesEnable
-  let g:indent_guides_guide_size=2
-  let g:indent_guides_auto_colors = 0
-  autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#002D38 ctermbg=3
-  autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#003340 ctermbg=4
-endif
-
